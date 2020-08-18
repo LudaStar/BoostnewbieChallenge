@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+//연결 리스트의 기본 단위가 되는 node 구조체를 정의
+typedef struct node
+{
+    //node 안에서 정수형 값이 저장되는 변수를 name으로 지정
+    int number;
+
+    //다음 node의 주소를 가리키는 포인터를 *next로 지정
+    struct node *next;
+}
+node;
+
+int main(void)
+{
+    //list라는 이름의 node 포인터를 정의, 연결 리스트의 가장 첫 번째의 node 가르킴
+    //이 포인터는 현재 아무것도 가르키고 있지 않으므로 NULL로 초기화
+    node *list = NULL;
+
+
+    //새로운 node를 위해 메모리를 할당하고 포인터 *n으로 가르킴
+    node *n = malloc(sizeof(node));
+    if(n == NULL)
+    {
+        return 1;
+    }
+
+    //n의 number 필드에 1의 값 저장 n->number는 (*n).number와 동일한 의미
+    //n이 가르키는 node의 number 필드를 의미하는 것
+    n->number = 1;
+
+    //n 다음에 정의된 node가 없으므로 NULL로 초기화
+    n->next = NULL;
+
+    //이제 첫 번째 node를 정의했기 때문에 list포인터를 n포인터로 바꿔줌
+    list = n;
+
+    //이제 list에 다른 node를 더 연결하기 위해 n에 새로운 메모리를 다시 할당
+    //n은 malloc으로 인해 위의 n과 다른 주소를 가지게 됨
+    n = malloc(sizeof(node));
+    if(n == NULL)
+    {
+        return 1;
+    }
+
+    //n의 number와 next의 값을 각각 저장
+    n->number = 2;
+    n->next = NULL;
+
+    //list가 가리키는 것은 첫 번째 node
+    //이 node의 다음 node를 n 포인터로 지정
+    list->next = n;
+
+    //다시 한 번 n 포인터에 새로운 메모리를 할당하고 number와 next의 값을 저장
+    n = malloc(sizeof(node));
+    if(n == NULL)
+    {
+        return 1;
+    }
+
+    n->number = 3;
+    n->next = NULL;
+
+    //현재 list는 첫번째 node를 가리키고, 이는 두번째 node와 연결되어 있음
+    //따라서 세번째 node를 더 연결하기 위해 첫번째 node(list)의
+    //다음 node(list->next)의 다음 node(list->next->next)를 n 포인터로 지정
+    list->next->next = n;
+
+    //이제 list에 연결된 node를 처음부터 방문하면서 각 number값을 출력
+    //마지막 node의 next에는 NULL이 저장되어 있을 것이므로 for루프의 종료 조건
+    for(node *tmp = list; tmp != NULL; tmp = tmp->next)
+    {
+        printf("%i\n", tmp->number);
+    }
+
+    //메모리를 해제해주기 위해 list에 연결된 node들을 처음부터 방문하면서 free해줌
+    while(list != NULL)
+    {
+        node *tmp = list->next;
+        free(list);
+        list = tmp;
+    }
+}
